@@ -1,0 +1,15 @@
+[Unit]
+Description=Discord TestFlight Watcher
+After=network.target
+
+[Service]
+Type=simple
+User=hacke
+WorkingDirectory=/home/hacke/workspaces/worker-testflight-watcher
+ExecStart=/usr/bin/npx wrangler dev --test-scheduled
+Restart=always
+RestartSec=10
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target 

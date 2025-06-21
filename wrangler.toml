@@ -2,16 +2,16 @@ name = "discordlookup-testflight-watcher"
 main = "src/worker.ts"
 compatibility_date = "2023-06-10"
 
-workers_dev = false
-route = { pattern = "testflight.workers.discordlookup.com", custom_domain = true, zone_name = "discordlookup.com" }
-
-kv_namespaces = [
-	{ binding = "TESTFLIGHT_STATE", id = "02b29b6958844bc4841645dde262363a" }
-]
+workers_dev = true
+route = "https://testflight-worker.khamphatestflight.workers.dev/"
 
 [vars]
-#DISCORD_WEBHOOK_URL = ""
-TESTFLIGHT_URL = "https://testflight.apple.com/join/gdE4pRzI"
+TESTFLIGHT_URL = "https://testflight.apple.com/join/dDtSst46"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1385983341651689534/qgnnqBm1WemjqMltGFpVRJlgj_E_tfM2fkpJs44CBGEdBHBE7xyCKULw3XR467m4k7mC"
 
 [triggers]
-crons = ["* * * * *"]
+crons = ["*/1 * * * *"]
+
+[[r2_buckets]]
+binding = "STATE_BUCKET"
+bucket_name = "testflight-state"
