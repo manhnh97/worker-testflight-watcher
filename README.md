@@ -116,6 +116,8 @@ The worker provides structured JSON logging with the following levels:
 - **WARN**: Non-critical issues, missing configurations
 - **ERROR**: Critical failures, network errors, API failures
 
+**Note**: All timestamps are in GMT+7 timezone.
+
 ### Log Format
 ```json
 {

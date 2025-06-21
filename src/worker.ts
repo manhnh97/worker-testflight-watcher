@@ -20,6 +20,14 @@ function isValidTestFlightURL(url: string): boolean {
   }
 }
 
+// GMT+7 timestamp generator
+function getGMT7Timestamp(): string {
+  const now = new Date();
+  const gmt7Offset = 7 * 60; // GMT+7 in minutes
+  const localTime = new Date(now.getTime() + (gmt7Offset * 60 * 1000));
+  return localTime.toISOString();
+}
+
 // Payloads cho Discord
 const seatsAvailableAgain = (url: string) => ({
   embeds: [{
@@ -28,7 +36,7 @@ const seatsAvailableAgain = (url: string) => ({
     type: "rich",
     description: "✅ New TestFlight seats available!",
     color: 0x57f287,
-    timestamp: new Date().toISOString(),
+    timestamp: getGMT7Timestamp(),
     footer: { text: "DiscordLookup.com" }
   }],
   components: [{
@@ -49,16 +57,16 @@ const seatsFull = (url: string) => ({
     type: "rich",
     description: "🚫 All TestFlight seats are taken again.",
     color: 0xed4245,
-    timestamp: new Date().toISOString(),
+    timestamp: getGMT7Timestamp(),
     footer: { text: "DiscordLookup.com" }
   }]
 });
 
 const logger = {
-  info: (message: string, data?: any) => console.log(JSON.stringify({ level: "INFO", timestamp: new Date().toISOString(), message, ...(data && { data }) })),
-  error: (message: string, error?: any) => console.error(JSON.stringify({ level: "ERROR", timestamp: new Date().toISOString(), message, ...(error && { error: error instanceof Error ? error.message : error }) })),
-  warn: (message: string, data?: any) => console.warn(JSON.stringify({ level: "WARN", timestamp: new Date().toISOString(), message, ...(data && { data }) })),
-  debug: (message: string, data?: any) => console.log(JSON.stringify({ level: "DEBUG", timestamp: new Date().toISOString(), message, ...(data && { data }) })),
+  info: (message: string, data?: any) => console.log(JSON.stringify({ level: "INFO", timestamp: getGMT7Timestamp(), message, ...(data && { data }) })),
+  error: (message: string, error?: any) => console.error(JSON.stringify({ level: "ERROR", timestamp: getGMT7Timestamp(), message, ...(error && { error: error instanceof Error ? error.message : error }) })),
+  warn: (message: string, data?: any) => console.warn(JSON.stringify({ level: "WARN", timestamp: getGMT7Timestamp(), message, ...(data && { data }) })),
+  debug: (message: string, data?: any) => console.log(JSON.stringify({ level: "DEBUG", timestamp: getGMT7Timestamp(), message, ...(data && { data }) })),
 };
 
 // Rate limiting helper
@@ -112,7 +120,7 @@ export default {
             "/health": "Health check endpoint",
             "/debug": "Debug information (if enabled)"
           },
-          timestamp: new Date().toISOString()
+          timestamp: getGMT7Timestamp()
         }), { headers: { "Content-Type": "application/json" } });
       }
 
@@ -133,7 +141,7 @@ export default {
           status: "healthy",
           r2: r2Status,
           discord: env.DISCORD_WEBHOOK_URL ? "configured" : "not_configured",
-          timestamp: new Date().toISOString()
+          timestamp: getGMT7Timestamp()
         }), { headers: { "Content-Type": "application/json" } });
       }
 
@@ -175,7 +183,7 @@ export default {
               logger.warn("Invalid TestFlight URL found", { url });
               states.push({ 
                 STATE: "INVALID_URL", 
-                TIME: new Date().toISOString(), 
+                TIME: getGMT7Timestamp(), 
                 url,
                 error: "Invalid TestFlight URL format" 
               });
@@ -184,7 +192,7 @@ export default {
 
             const key = "state-" + await hashURL(url) + ".json";
             const obj = await env.STATE_BUCKET.get(key);
-            let state: TestFlightState = { STATE: "UNKNOWN", TIME: new Date(0).toISOString(), url };
+            let state: TestFlightState = { STATE: "UNKNOWN", TIME: getGMT7Timestamp(), url };
             if (obj) {
               try {
                 const parsedState = await obj.json() as { STATE: string; TIME: string };
@@ -195,7 +203,7 @@ export default {
                 };
               } catch (error) {
                 logger.error("Failed to parse state JSON", { url, key, error });
-                state = { STATE: "CORRUPTED", TIME: new Date().toISOString(), url, error: "Corrupted state data" };
+                state = { STATE: "CORRUPTED", TIME: getGMT7Timestamp(), url, error: "Corrupted state data" };
               }
             }
             states.push(state);
@@ -204,7 +212,7 @@ export default {
           return new Response(JSON.stringify({
             states,
             count: states.length,
-            timestamp: new Date().toISOString()
+            timestamp: getGMT7Timestamp()
           }, null, 2), { headers: { "Content-Type": "application/json" } });
         } catch (error) {
           logger.error("Failed to get states", { error });
@@ -324,7 +332,7 @@ export default {
 
           // 4. Nếu thay đổi trạng thái → lưu mới & gửi Discord
           if (newState !== previousState) {
-            const now = new Date().toISOString();
+            const now = getGMT7Timestamp();
             
             try {
               await env.STATE_BUCKET.put(

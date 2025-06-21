@@ -18,6 +18,8 @@ curl https://your-worker.your-subdomain.workers.dev/health
 }
 ```
 
+**Note**: All timestamps in responses and logs are in GMT+7 timezone.
+
 ### Check Current Status
 ```bash
 # Get all TestFlight statuses
