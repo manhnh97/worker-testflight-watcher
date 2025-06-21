@@ -8,8 +8,8 @@ workers_dev = true
 #route = "https://testflight-worker.khamphatestflight.workers.dev/"
 
 [vars]
-TESTFLIGHT_URL = "https://testflight.apple.com/join/dDtSst46"
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/"
+#TESTFLIGHT_URL = ""
+DISCORD_WEBHOOK_URL = ""
 
 [triggers]
 crons = ["*/1 * * * *"]
@@ -17,3 +17,8 @@ crons = ["*/1 * * * *"]
 [[r2_buckets]]
 binding = "STATE_BUCKET"
 bucket_name = "testflight-state"
+
+# wrangler.toml (wrangler v3.88.0^)
+[observability.logs]
+enabled = true
+head_sampling_rate = 0.2
