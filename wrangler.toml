@@ -1,13 +1,15 @@
 name = "discordlookup-testflight-watcher"
 main = "src/worker.ts"
-compatibility_date = "2023-06-10"
+compatibility_date = "2025-06-21"
 
+account_id = ""
 workers_dev = true
-route = "https://testflight-worker.khamphatestflight.workers.dev/"
+
+#route = "https://testflight-worker.khamphatestflight.workers.dev/"
 
 [vars]
 TESTFLIGHT_URL = "https://testflight.apple.com/join/dDtSst46"
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1385983341651689534/qgnnqBm1WemjqMltGFpVRJlgj_E_tfM2fkpJs44CBGEdBHBE7xyCKULw3XR467m4k7mC"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/"
 
 [triggers]
 crons = ["*/1 * * * *"]
